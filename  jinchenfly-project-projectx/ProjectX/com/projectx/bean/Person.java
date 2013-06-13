@@ -10,7 +10,9 @@ import com.projectx.base.UnitX;
 
 public class Person extends UnitX {
 	public int range;
-	protected List<UnitX> unitInRange; 
+	public int movement;
+	protected List<UnitX> unitInRange;
+	protected List<Point> moveablePoint;
 	public Person(Point p){
 		this.map = Map.getInstance();
 		this.point = getBirthPoint(p);
@@ -23,6 +25,8 @@ public class Person extends UnitX {
 		this.status = UnitStatus.Normal;
 		this.Name = "Unit"+Map.getInstance().getCount();
 		this.defeatCount = 0;
+		this.movement = 1;
+		moveablePoint = new ArrayList<Point>();
 		unitInRange = new ArrayList<UnitX>();
 		System.out.println(this.getClass().getName().substring(this.getClass().getName().lastIndexOf('.')+1)+" "+Name+" Created.Point "+point.x+","+point.y);
 	}
@@ -149,19 +153,35 @@ public class Person extends UnitX {
 	public UnitStatus getStatus(){
 		return status;
 	}
-	public List<Point> getSearchArea(){
-		int startX = point.x-range;
-		int startY = point.y-range;
-		int endX = point.x+range;
-		int endY = point.y+range;
+	public List<Point> getSquareArea(Point p,int r){
+		int startX = p.x-r;
+		int startY = p.y-r;
+		int endX = p.x+r;
+		int endY = p.y+r;
 		List<Point> areaList = new ArrayList<Point>();
 		for(int x=startX;x<=endX;x++){
 			for(int y=startY;y<=endY;y++){
-				if((Math.abs(y-point.y)+Math.abs(x-point.x))<=range){
+				if((Math.abs(y-p.y)+Math.abs(x-p.x))<=r){
 					areaList.add(new Point(x,y));
 				}
 			}
 		}
+		return areaList;
+	}
+	public List<Point> getSearchArea(){
+//		int startX = point.x-range;
+//		int startY = point.y-range;
+//		int endX = point.x+range;
+//		int endY = point.y+range;
+//		List<Point> areaList = new ArrayList<Point>();
+//		for(int x=startX;x<=endX;x++){
+//			for(int y=startY;y<=endY;y++){
+//				if((Math.abs(y-point.y)+Math.abs(x-point.x))<=range){
+//					areaList.add(new Point(x,y));
+//				}
+//			}
+//		}
+		List<Point> areaList = getSquareArea(point,range);
 		unitInRange.clear();
 		UnitX temp = null;
 		for (Point point : areaList) {
@@ -202,4 +222,8 @@ public class Person extends UnitX {
 			}
 		}
 	}
+	public List<Point> getMoveablePoint(){
+		return getSquareArea(point,movement);
+	}
+	
 }

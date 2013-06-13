@@ -7,6 +7,7 @@ public class Archer extends Person {
 		super(p);
 		range = 3;
 		str = 8;
+		movement = 3;
 	}
 	
 	
