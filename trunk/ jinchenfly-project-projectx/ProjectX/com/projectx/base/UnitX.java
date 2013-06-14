@@ -12,6 +12,7 @@ public abstract class UnitX {
 	protected UnitStatus status;
 	protected int defeatCount;
 	public int ID;
+	public int mobility;
 	public abstract boolean move(Point p);
 	public abstract UnitStatus beDamaged(int power);
 	

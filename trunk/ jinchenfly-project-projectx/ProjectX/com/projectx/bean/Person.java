@@ -2,15 +2,16 @@ package com.projectx.bean;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.projectx.base.Map;
+import com.projectx.base.MapPoint;
 import com.projectx.base.Point;
 import com.projectx.base.UnitX;
 
 public class Person extends UnitX {
 	public int range;
-	public int movement;
 	protected List<UnitX> unitInRange;
 	protected List<Point> moveablePoint;
 	protected int keepDistance;
@@ -28,7 +29,7 @@ public class Person extends UnitX {
 		this.Name = "Unit"+Map.getInstance().getCount();
 		this.ID = Map.getInstance().getCount();
 		this.defeatCount = 0;
-		this.movement = 1;
+		this.mobility = 1;
 		this.keepDistance = 1;
 		moveablePoint = new ArrayList<Point>();
 		unitInRange = new ArrayList<UnitX>();
@@ -247,14 +248,66 @@ public class Person extends UnitX {
 			attack(unitInRange.get(0));
 		}
 	}
+//	public List<Point> getMoveablePoint(){
+//		List<Point> moveablePoint = getSquareArea(point,mobility);
+//		for (int x=moveablePoint.size()-1;x>=0;x--) {
+//			if(map.getUnitX(moveablePoint.get(x))!=null){
+//				moveablePoint.remove(x);
+//			}
+//		}
+//		return moveablePoint;
+//	}
 	public List<Point> getMoveablePoint(){
-		List<Point> moveablePoint = getSquareArea(point,movement);
-		for (int x=moveablePoint.size()-1;x>=0;x--) {
-			if(map.getUnitX(moveablePoint.get(x))!=null){
-				moveablePoint.remove(x);
-			}
+		Point[] direction = new Point[]{new Point(1,0),new Point(-1,0),new Point(0,1),new Point(0,-1)};
+		Point startPoint = this.point;
+		HashMap<Point,Integer> moveablePointMap = new HashMap<Point, Integer>();
+		for(int x=0;x<direction.length;x++){
+			recurGetMoveArea(moveablePointMap,direction,startPoint.add(direction[x]),this.mobility);
 		}
+		List<Point> moveablePoint = new ArrayList<Point>(moveablePointMap.keySet());
+//		for (int x=moveablePoint.size()-1;x>=0;x--) {
+//			if(map.getUnitX(moveablePoint.get(x))!=null){
+//				moveablePoint.remove(x);
+//			}
+//		}
 		return moveablePoint;
+	}
+	public void printMoveArea(){
+		List<Point> moveablePoint = getMoveablePoint();
+		map.paintMap(moveablePoint);
+	}
+	private void recurGetMoveArea(HashMap<Point,Integer> moveablePoint,Point[] direction,Point searchPoint,int mobility){
+		if(!searchPoint.isInMap(map))
+			return;
+		MapPoint mapPoint = map.getMapPoint(searchPoint);
+		if(mapPoint.block !=0){
+			return;
+		}
+		if(map.getUnitX(searchPoint)!=null){
+			return;
+		}
+		int leftMobility = mobility - mapPoint.decrease;
+		if(leftMobility<0){
+			return;
+		}else{
+			if(moveablePoint.containsKey(searchPoint)){
+				if(leftMobility>moveablePoint.get(searchPoint)){
+					moveablePoint.remove(searchPoint);
+					moveablePoint.put(searchPoint, leftMobility);
+					for(int x=0;x<direction.length;x++){
+						recurGetMoveArea(moveablePoint,direction,searchPoint.add(direction[x]),leftMobility);
+					}
+				}else{
+					return;
+				}
+			}else{
+				moveablePoint.put(searchPoint, leftMobility);
+				for(int x=0;x<direction.length;x++){
+					recurGetMoveArea(moveablePoint,direction,searchPoint.add(direction[x]),leftMobility);
+				}
+			}
+			
+		}
 	}
 	public Point getNearestPoint(Point targetPoint,List<Point> moveablePoint,int keepDistance){
 		Point bestPoint = null;

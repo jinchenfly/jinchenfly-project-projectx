@@ -3,10 +3,10 @@ package com.projectx.test;
 
 
 import com.projectx.base.Map;
+import com.projectx.base.MapPoint;
 import com.projectx.base.Point;
 import com.projectx.bean.Archer;
 import com.projectx.bean.Person;
-import com.projectx.bean.Saber;
 
 public class Test {
 
@@ -16,6 +16,8 @@ public class Test {
 	public static void main(String[] args) {
 		Person p1 = new Person(new Point(0,0));
 		Person p2 = new Person(new Point(2,1));
+		MapPoint point = Map.getInstance().getMapPoint(new Point(4,5));
+		point.block = 1;
 //		p1.moveDown();
 //		p1.moveRight();
 //		p1.moveRight();
@@ -23,11 +25,13 @@ public class Test {
 //			p1.attack(p2);
 //		}
 		Archer p3 = new Archer(new Point(5,5));
-		Saber p4 = new Saber(new Point(0,9));
-		while(Map.getInstance().getCount()>1){
-			p3.autoAction();
-			p4.autoAction();
-		}
+		//p3.mobility++;
+		p3.printMoveArea();
+//		Saber p4 = new Saber(new Point(0,9));
+//		while(Map.getInstance().getCount()>1){
+//			p3.autoAction();
+//			p4.autoAction();
+//		}
 
 //		HashMap map = new HashMap();
 //		Point po1 = new Point(0,0);
