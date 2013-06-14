@@ -22,6 +22,9 @@ public class Point {
 	public Point addXY(int offsetX,int offsetY){
 		return new Point(x+offsetX,y+offsetY);
 	}
+	public Point add(Point p){
+		return new Point(x+p.x,y+p.y);
+	}
 	public boolean isInMap(Map map){
 		if(x>=0 && y>=0 && x<Map.maxX && y<Map.maxY){
 			return true;

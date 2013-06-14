@@ -8,7 +8,7 @@ public class Archer extends Person {
 		MaxHP=100;
 		range = 3;
 		str = 10;
-		movement = 3;
+		mobility = 3;
 		keepDistance = 3;
 		HP = MaxHP;
 	}
