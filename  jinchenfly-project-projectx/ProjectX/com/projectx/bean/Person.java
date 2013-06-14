@@ -13,6 +13,7 @@ public class Person extends UnitX {
 	public int movement;
 	protected List<UnitX> unitInRange;
 	protected List<Point> moveablePoint;
+	protected int keepDistance;
 	public Person(Point p){
 		this.map = Map.getInstance();
 		this.point = getBirthPoint(p);
@@ -20,15 +21,18 @@ public class Person extends UnitX {
 			boolean flag = map.setUnitX(point, this);
 			//System.out.println("setPoint success?:"+flag);
 		}
-		this.HP = 100;
+		this.MaxHP = 50;
+		this.HP = MaxHP;
 		this.str = 10;
 		this.status = UnitStatus.Normal;
 		this.Name = "Unit"+Map.getInstance().getCount();
+		this.ID = Map.getInstance().getCount();
 		this.defeatCount = 0;
 		this.movement = 1;
+		this.keepDistance = 1;
 		moveablePoint = new ArrayList<Point>();
 		unitInRange = new ArrayList<UnitX>();
-		System.out.println(this.getClass().getName().substring(this.getClass().getName().lastIndexOf('.')+1)+" "+Name+" Created.Point "+point.x+","+point.y);
+		System.out.println(this.getClass().getName().substring(this.getClass().getName().lastIndexOf('.')+1)+" "+Name+" Created.Point "+(point.x+1)+","+(point.y+1));
 	}
 	@Override
 	public boolean move(Point p) {
@@ -39,30 +43,36 @@ public class Person extends UnitX {
 		if(map.setUnitX(p, this)){
 			map.releaseUnitX(point);
 			point = p;
-			System.out.println(Name+" move to Point("+point.toString()+")");
+			System.out.println(Name+" move to Point("+(point.x+1)+","+(point.y+1)+")");
 			map.paintMap();
 			getSearchArea();
 			return true;
 		}else{
-			System.out.println("Unit exist.move failed."+Name+" stay at Point("+point.toString()+")");
+			System.out.println("Unit exist.move failed."+Name+" stay at Point("+(point.x+1)+","+(point.y+1)+")");
 		}
 		
 		return false;
 	}
 	public boolean getClose(Point p){
-		if(Math.abs(p.x-this.point.x)>Math.abs(p.y-this.point.y)){
-			if(p.x>this.point.x){
-				return moveRight();
-			}else{
-				return moveLeft();
-			}
-		}else{
-			if(p.y>this.point.y){
-				return moveDown();
-			}else{
-				return moveUp();
-			}
-		}
+		List<Point> moveablePoint = getMoveablePoint();
+		Point bestPoint = getNearestPoint(p, moveablePoint, this.keepDistance);
+		if(bestPoint == null)
+			return false;
+		move(bestPoint);
+		return true;
+//		if(Math.abs(p.x-this.point.x)>Math.abs(p.y-this.point.y)){
+//			if(p.x>this.point.x){
+//				return moveRight();
+//			}else{
+//				return moveLeft();
+//			}
+//		}else{
+//			if(p.y>this.point.y){
+//				return moveDown();
+//			}else{
+//				return moveUp();
+//			}
+//		}
 	}
 	public boolean moveLeft(){
 		return move(point.addXY(-1, 0));
@@ -142,7 +152,7 @@ public class Person extends UnitX {
 	
 	public UnitStatus beDamaged(int power){
 		this.HP-=power;
-		System.out.println(Name+" lost "+power+" HP");
+		System.out.println(Name+" lost "+power+" HP.Left HP="+HP);
 		if(this.HP<=0){
 			this.status = UnitStatus.Dead;
 			map.releaseUnitX(this.point);
@@ -158,9 +168,14 @@ public class Person extends UnitX {
 		int startY = p.y-r;
 		int endX = p.x+r;
 		int endY = p.y+r;
+		Point tempPoint = null;
 		List<Point> areaList = new ArrayList<Point>();
 		for(int x=startX;x<=endX;x++){
 			for(int y=startY;y<=endY;y++){
+				tempPoint = new Point(x,y);
+				if(!tempPoint.isInMap(map)){
+					continue;
+				}
 				if((Math.abs(y-p.y)+Math.abs(x-p.x))<=r){
 					areaList.add(new Point(x,y));
 				}
@@ -193,7 +208,7 @@ public class Person extends UnitX {
 		}
 		return areaList;
 	}
-	public Point getNearestPoint() {
+	public Point getNearestEnemyPoint() {
 		Point nearestPoint = null;
 		List<Point> pointList = map.getAllUnitPoint();
 		for (Point point : pointList) {
@@ -202,8 +217,8 @@ public class Person extends UnitX {
 			if(nearestPoint == null)
 				nearestPoint = point;
 			else{
-				if((Math.abs(this.point.y-point.y)+Math.abs(this.point.x-point.x))<
-						(Math.abs(this.point.y-nearestPoint.y)+Math.abs(this.point.x-nearestPoint.x))){
+				if(Point.getDistance(this.point, point)<
+						Point.getDistance(this.point, nearestPoint)){
 					nearestPoint = point;
 				}
 			}
@@ -211,19 +226,62 @@ public class Person extends UnitX {
 		return nearestPoint;
 	}
 	public void autoAction(){
-		getSearchArea();
+//		getSearchArea();
+//		if(!unitInRange.isEmpty()){
+//			attack(unitInRange.get(0));
+//		}
+//		else{
+//			Point nearestPoint = getNearestEnemyPoint();
+//			if(nearestPoint!=null){
+//				getClose(nearestPoint);
+//			}
+//		}
+		if(status==UnitStatus.Dead)
+			return;
+		Point nearestPoint = getNearestEnemyPoint();
+		if(nearestPoint!=null){
+			getClose(nearestPoint);
+		}
+		//getSearchArea();
 		if(!unitInRange.isEmpty()){
 			attack(unitInRange.get(0));
 		}
-		else{
-			Point nearestPoint = getNearestPoint();
-			if(nearestPoint!=null){
-				getClose(nearestPoint);
-			}
-		}
 	}
 	public List<Point> getMoveablePoint(){
-		return getSquareArea(point,movement);
+		List<Point> moveablePoint = getSquareArea(point,movement);
+		for (int x=moveablePoint.size()-1;x>=0;x--) {
+			if(map.getUnitX(moveablePoint.get(x))!=null){
+				moveablePoint.remove(x);
+			}
+		}
+		return moveablePoint;
+	}
+	public Point getNearestPoint(Point targetPoint,List<Point> moveablePoint,int keepDistance){
+		Point bestPoint = null;
+		int bestDistance = -1;
+		int tempDistance = -1;
+		for (Point point : moveablePoint) {
+			
+			tempDistance = Point.getDistance(point, targetPoint);
+			if(bestDistance == -1 || tempDistance<bestDistance){
+				bestDistance = tempDistance;
+				bestPoint = point;
+			}
+			if(tempDistance == keepDistance){
+				return point;
+			}
+		}
+		return bestPoint;
+	}
+	public double getThreat(){
+		double threat = 0;
+		if(HP>=MaxHP*0.5){
+			threat+= MaxHP-HP;
+		}else{
+			threat+= MaxHP*0.5+(MaxHP*0.5-HP)*2;
+		}
+		threat+=str*5;
+		return threat;
 	}
 	
 }

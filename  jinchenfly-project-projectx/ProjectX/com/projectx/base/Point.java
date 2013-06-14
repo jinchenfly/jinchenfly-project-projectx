@@ -23,7 +23,7 @@ public class Point {
 		return new Point(x+offsetX,y+offsetY);
 	}
 	public boolean isInMap(Map map){
-		if(x<Map.maxX && y<Map.maxY){
+		if(x>=0 && y>=0 && x<Map.maxX && y<Map.maxY){
 			return true;
 		}
 		return false;
@@ -48,5 +48,8 @@ public class Point {
 	public Point(int x,int y){
 		this.x = x;
 		this.y = y;
+	}
+	public static int getDistance(Point p1,Point p2){
+		return Math.abs(p2.x-p1.x)+Math.abs(p2.y-p1.y);
 	}
 }
