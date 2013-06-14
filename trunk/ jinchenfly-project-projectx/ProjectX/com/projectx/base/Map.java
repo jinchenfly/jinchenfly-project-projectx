@@ -43,10 +43,18 @@ public class Map {
 		return map.size();
 	}
 	public void paintMap(){
+		System.out.print("   ");
+		for(int x=1;x<=10;x++){
+			System.out.print(x+" ");
+		}
+		System.out.println();
 		for(int y=0;y<maxY;y++){
+			System.out.print((y+1)+" ");
+			if(y<9)
+				System.out.print(" ");
 			for(int x=0;x<maxX;x++){
 				if(map.containsKey(new Point(x,y))){
-					System.out.print("X ");
+					System.out.print(map.get(new Point(x,y)).ID+" ");
 				}else{
 					System.out.print("O ");
 				}
