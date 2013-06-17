@@ -8,8 +8,11 @@ public class Saber extends Person {
 		MaxHP = 100;
 		range = 1;
 		str = 15;
+		dex = 10;
+		agi = 5;
 		mobility = 2;
 		HP = MaxHP;
+		luc = 3;
 	}
 
 }
