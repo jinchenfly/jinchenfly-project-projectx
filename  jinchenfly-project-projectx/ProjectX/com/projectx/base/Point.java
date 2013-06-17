@@ -55,4 +55,9 @@ public class Point {
 	public static int getDistance(Point p1,Point p2){
 		return Math.abs(p2.x-p1.x)+Math.abs(p2.y-p1.y);
 	}
+	public static Point random(int maxX,int maxY){
+		int x = (int)(Math.random()*maxX);
+		int y = (int)(Math.random()*maxY);
+		return new Point(x,y);
+	}
 }
