@@ -2,6 +2,7 @@ package com.projectx.test;
 
 
 
+import com.projectx.base.GraphicMap;
 import com.projectx.base.Map;
 import com.projectx.base.Point;
 import com.projectx.bean.Archer;
@@ -34,12 +35,24 @@ public class Test {
 		//p3.printMoveArea();
 		Saber p4 = new Saber(Point.random(10, 10));
 		Assassion p5 = new Assassion(Point.random(10, 10));
-		while(Map.getInstance().getCount()>1){
-			p3.autoAction();
-			p4.autoAction();
-			p5.autoAction();
+
+//		Map.getInstance().paintMap();
+		GraphicMap gMap = GraphicMap.getInstance();
+		Thread t = new Thread(gMap);
+		t.start();
+		try {
+			while(Map.getInstance().getCount()>1){
+				p3.autoAction();
+				Thread.sleep(1000);
+				p4.autoAction();
+				Thread.sleep(1000);
+				p5.autoAction();
+				Thread.sleep(1000);
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		Map.getInstance().paintMap();
 //		HashMap map = new HashMap();
 //		Point po1 = new Point(0,0);
 //		Point po2 = new Point(0,0);

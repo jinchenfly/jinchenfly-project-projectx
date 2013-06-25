@@ -3,15 +3,19 @@ package com.projectx.base;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+
+import com.projectx.factory.GraphicFactory;
+import com.projectx.factory.GraphicOperator;
 
 public class Map {
 	private static Map instance;
+	private GraphicOperator op;
 	public static Map getInstance(){
 		if(instance==null){
 			System.out.println("Map not exist.Creating");
 			instance = new Map();
+			instance.op = GraphicFactory.getGraphicOperator();
 		}
 		return instance;
 	}
@@ -38,6 +42,7 @@ public class Map {
 	public Boolean setUnitX(Point p,UnitX u){
 		if(!map.containsKey(p)){
 			map.put(p,u);
+			op.setPointValue(p, String.valueOf(u.ID));
 			return true;
 		}
 		return false;
@@ -46,6 +51,7 @@ public class Map {
 		if(map.containsKey(p)){
 			map.remove(p);
 		}
+		op.releasePoint(p);
 	}
 	public int getCount(){
 		return map.size();
