@@ -16,7 +16,10 @@ public class Person extends UnitX {
 	protected List<Point> moveablePoint;
 	protected List<Point> attackablePoint;
 	protected int keepDistance;
+	public static int count = 0;
 	public Person(Point p){
+		count++;
+		this.ID = count;
 		this.UnitMap = Map.getInstance();
 		setPoint(getBirthPoint(p));
 		if(getPoint() != null){
@@ -27,8 +30,7 @@ public class Person extends UnitX {
 		this.HP = MaxHP;
 		this.str = 1;
 		this.status = UnitStatus.Normal;
-		this.Name = "Unit"+Map.getInstance().getCount();
-		this.ID = Map.getInstance().getCount();
+		this.Name = "Unit"+this.ID;
 		this.defeatCount = 0;
 		this.mobility = 1;
 		this.keepDistance = 1;
