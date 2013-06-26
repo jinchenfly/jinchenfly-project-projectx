@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre5"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/commons-beanutils-1.8.2.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/commons-collections.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/commons-digester-2.1.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/commons-logging.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/iText-2.1.7.js2.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/iTextAsian.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/jcommon-1.0.15.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/jfreechart-1.0.12.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/lib1.6/xalan.jar"/>
+	<classpathentry kind="lib" path="D:/temp/jasperreports-4.5.0.jar"/>
+	<classpathentry kind="lib" path="D:/jasper/yahei.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
